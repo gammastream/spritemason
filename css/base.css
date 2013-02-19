@@ -1,0 +1,158 @@
+html {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-size: 62.5%;
+	background-color: white;
+}
+
+
+#sm-toolbar {
+    z-index: 2;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 55px;
+    background: url(images/toolbar.bg.png) repeat-x 50% 50%;
+    border-bottom: 2px solid #333;
+    display: block;
+    overflow: hidden;
+}
+
+#sm-logo {
+    background: url(images/logo.png) no-repeat 0% 50%;
+    height: 55px;
+    width: 250px;
+    position: absolute;
+    top: 0px;
+    left: 5px;
+    line-height: 55px;
+    font-size: 18px;
+    text-indent: -9999px;
+}
+
+#sm-content {
+	font-family: Chalkboard, Verdana, Arial, Sans-serif;
+	padding: 1em 2em;
+	font-size: 16px;
+	margin-top: 55px;
+	overflow: hidden;
+}
+
+#sm-step-zone {
+	float: left;
+	width: 355px;
+}
+
+#sm-steps {
+	font-size: 24px;
+	margin: 0;
+}
+
+#sm-drop-zone {
+	width: 300px;
+	height: 50px;
+	line-height: 50px;
+	border: 2px dashed #bbbbbb;
+	text-align: center;
+	color: #bbbbbb;
+	font-weight: bold;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	font-family: verdana;
+	margin: 10px 0;
+	font-size: 16px;
+}
+
+#sm-work-zone {
+	margin-left: 375px;
+}
+
+#sm-work-zone h2 {
+	font-weight: normal;
+	margin-top: 0;
+	margin-bottom: 5px;
+}
+
+#sm-work-zone .instructions {
+	font-style: italic;
+	font-size: 12px;
+	display: block;
+	margin: 7px 0;
+}
+
+label {
+	display: block;
+	font-family: verdana;
+	font-size: 14px;
+}
+
+label span {
+	display: inline-block;
+	width: 100px;
+	text-align: left;
+}
+
+#sm-footer {
+	text-align: center;
+	font-size: 10px;
+	font-family: verdana;
+	padding: 1.2em;
+	background-color: white;
+	margin-top: 50px;
+	clear: both;
+}
+
+#sm-scratch-pad {
+	display: none;
+}
+
+#sm-scratch-pad-images span {
+	padding: 5px;
+}
+
+#sm-output-sprite {
+	display: none;
+	margin-bottom: 20px;
+}
+
+#sm-output-sprite-image {
+
+}
+
+#sm-output-css {
+	display: none;
+	cursor: pointer;
+}
+
+#sm-output-css-text {
+	white-space:pre-wrap;
+	font-family: courier;
+	font-size: 12px;
+	overflow: auto;
+	border: 1px solid #aaa;
+	padding: 15px;
+	border-radius: 3px;
+}
+
+.sm-canvas {
+	display: none;
+}
+
+@media all and (max-width: 750px) {
+	#sm-step-zone {
+		float: none;
+	}
+	#sm-work-zone {
+		margin-left: 0;
+		margin-top: 25px;
+		border-top: 2px dashed black;
+		padding-top: 15px;
+	}
+}
