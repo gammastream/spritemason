@@ -1,163 +1,199 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<title>SpriteMason by GammaStream</title>
-	<link rel="stylesheet" type="text/css" media="all" href="css/base.css" />
-	<script type="text/javascript" charset="utf-8" src="http://api.dev/libs/jquery/1.5.2/jquery.min.js"></script>
+    <meta charset="utf-8" />
+    <title>SpriteMason by GammaStream</title>
+    <link rel="stylesheet" type="text/css" media="all" href="css/base.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
 </head>
 <body>
-	<div id="sm-toolbar">
+    <div id="sm-toolbar">
         <div id="sm-logo">SpriteMason</div>
     </div>
     <div id="sm-content">
-    	<p>SpriteMason is as simple as, well... one, two, three in fact.  Follow the steps below to generate your sprite image and associated CSS.</p>
-    	<div id="sm-step-zone">
-			<ol id="sm-steps">
-				<li>
-					<div>Select image files (png)</div>
-					<div id="sm-drop-zone">Drop image files here</div>
-				</li>
-				<li>
-					<div>Configure options</div>
-					<div style="margin: 10px 0px">
-						<label><span>Padding:</span> <input type="text" id="sm-param-padding" style="width: 32px" placeholder="5"/> pixels</label>
-						<label><span>Icon Class:</span> <input type="text" id="sm-param-class" style="width: 100px" placeholder=".icon"/></label>
-						<label><span>CSS Prefix:</span> <input type="text" id="sm-param-prefix" style="width: 100px" placeholder="None"/></label>
-						<!--<label><span>Orientation:</span> <select style="width: 100px"><option>Grid</option><option>Horizontal</option><option>Vertical</option></select></label>-->
-					</div>
-				</li>
-				<li>
-					<div>Create sprite + CSS</div>
-					<div><input id="sm-build-button" type="submit" value="Build Sprite"> <input id="sm-reload-button" type="submit" value="Reload"></div>
-				</li>
-			</ol>
-    	</div>
-    	<div id="sm-work-zone">
-    		 <div id="sm-scratch-pad">
-    		 	<h2>Selected Images:</h2>
-    		 	<div id="sm-scratch-pad-images"></div>
-    		 </div>
-    		 <div id="sm-output-sprite">
-    		 	<h2>Sprite Image:</h2>
-    		 	<span class="instructions">(Right-click on image to "Save Image As…")</span>
-    		 	<img id="sm-output-sprite-img" src="" />
-    		 </div>
-    		 <div id="sm-output-css">
-    		 	<h2>Sprite CSS:</h2>
-    		 	<span class="instructions">(Click CSS to select, then Cmd+c or Ctrl+c to copy)</span>
-    		 	<div id="sm-output-css-text"></div>
-    		</div>
-    	</div>
+        <p>SpriteMason is as simple as, well... one, two, three in fact.  Follow the steps below to generate your sprite image and associated CSS.</p>
+        <div id="sm-step-zone">
+            <ol id="sm-steps">
+                <li>
+                    <div>Select image files (png)</div>
+                    <div id="sm-drop-zone">Drop image files here</div>
+                </li>
+                <li>
+                    <div>Configure options</div>
+                    <div style="margin: 10px 0px">
+                        <label><span>Padding:</span> <input type="text" id="sm-param-padding" style="width: 32px" placeholder="5"/> pixels</label>
+                        <label><span>Icon Class:</span> <input type="text" id="sm-param-class" style="width: 100px" placeholder=".icon"/></label>
+                        <label><span>CSS Prefix:</span> <input type="text" id="sm-param-prefix" style="width: 100px" placeholder="None"/></label>
+                    </div>
+                </li>
+                <li>
+                    <div>Create sprite + CSS</div>
+                    <div>
+                        <input id="sm-build-button" type="submit" value="Build Sprite">
+                        <input id="sm-reload-button" type="submit" value="Reload">
+                    </div>
+                </li>
+            </ol>
+        </div>
+        <div id="sm-work-zone">
+             <div id="sm-scratch-pad">
+                 <h2>Selected Images:</h2>
+                 <div id="sm-scratch-pad-images"></div>
+             </div>
+             <div id="sm-output-sprite">
+                 <h2>Sprite Image:</h2>
+                 <span class="instructions">(Right-click on image to "Save Image As…")</span>
+                 <img id="sm-output-sprite-img" src="" alt="Output Image">
+             </div>
+             <div id="sm-output-css">
+                 <h2>Sprite CSS:</h2>
+                 <span class="instructions">(Click CSS to select, then Cmd+c or Ctrl+c to copy)</span>
+                 <div id="sm-output-css-text"></div>
+            </div>
+        </div>
     </div>
     <div id="sm-footer">
-    	Copyright &copy; 2012-2013 GammaStream Technologies, Inc. All Rights Reserved.
+        Copyright &copy; 2012-2015 GammaStream Technologies, Inc. All Rights Reserved.
     </div>
 
     <script type="text/javascript">
-		var dropZone = document.getElementById('sm-drop-zone');
+        $(function(){
 
-  		dropZone.addEventListener('dragover', function(e){
-			e.stopPropagation();
-    		e.preventDefault();
-    		e.dataTransfer.dropEffect = 'copy';
-  		}, false);
+            // Lets define our drop zone and hook it up.
+            var dropZone = document.getElementById('sm-drop-zone');
 
-  		dropZone.addEventListener('drop', function(e){
-			e.stopPropagation();
-    		e.preventDefault();
-    		var files = e.dataTransfer.files;
-			for (var i = 0, f; f = files[i]; i++) {
-				if (f.type.match('image.*')) {
-					var reader = new FileReader();
-					reader.onload = (function(theFile) {
-						return function(e) {
-						  var span = document.createElement('span');
-						  span.innerHTML = ['<img class="sm-brick" src="', e.target.result, '" title="', escape(theFile.name), '"/>'].join('');
-						  document.getElementById('sm-scratch-pad-images').insertBefore(span, null);
-						};
-					})(f);
-					reader.readAsDataURL(f);
-				}
-			}
-			$('#sm-scratch-pad').show();
-  		}, false);
+            dropZone.addEventListener('dragover', function(e){
+                e.stopPropagation();
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'copy';
+            }, false);
 
-		$('#sm-build-button').click(function(e){
-			e.preventDefault();
-			spriteMason();
-			return false;
-		});
+            /**
+             * On drop we want to create a new img for each of the image files
+             * and append them to the scratch pad.
+             */
+            dropZone.addEventListener('drop', function(e){
+                e.stopPropagation();
+                e.preventDefault();
+                var files = e.dataTransfer.files;
+                for (var i = 0, f; f = files[i]; i++) {
+                    if (f.type.match('image.*')) {
+                        var reader = new FileReader();
+                        reader.onload = (function(theFile) {
+                            return function(e) {
+                                var span = document.createElement('span');
+                                span.innerHTML = ['<img class="sm-brick" src="', e.target.result, '" title="', escape(theFile.name), '"/>'].join('');
+                                document.getElementById('sm-scratch-pad-images').insertBefore(span, null);
+                            };
+                        })(f);
+                        reader.readAsDataURL(f);
+                    }
+                }
+                $('#sm-scratch-pad').show();
+            }, false);
 
-		$('#sm-reload-button').click(function(e){
-			e.preventDefault();
-			document.location.reload();
-			return false;
-		});
+            /**
+             * Build the sprite.
+             */
+            $('#sm-build-button').click(function(e){
+                e.preventDefault();
+                spriteMason();
+                return false;
+            });
 
-		$('#sm-output-css').click(function(e){
-			selectText('sm-output-css-text');
-		});
+            /**
+             * Reset the application by simply reloading the page.
+             */
+            $('#sm-reload-button').click(function(e){
+                e.preventDefault();
+                document.location.reload();
+                return false;
+            });
 
-		function spriteMason(){
-			$('.sm-canvas').remove();
-			$('#sm-scratch-pad').show();
-			$('#sm-output-sprite').hide();
-			$('#sm-output-css').show();
-			var maxWidth = 0;
-			var maxHeight = 0;
-			var count = 0;
-			var $images = $('.sm-brick');
-			var padding = $('#sm-param-padding').val() ? $('#sm-param-padding').val() : 5;
-			var icon_class = $('#sm-param-class').val() ? $('#sm-param-class').val() : '.icon';
-			var css_prefix = $('#sm-param-prefix').val() ? $('#sm-param-prefix').val() + ' ' : '';
-			$images.each(function(){
-				count++;
-				if( $(this).height() > maxHeight ) maxHeight = $(this).height();
-				if( $(this).width() > maxWidth ) maxWidth = $(this).width();
-			});
-			var rows = Math.ceil(Math.sqrt(count));
-			var cols = Math.ceil(count/rows);
+            /**
+             * Clicking the output pane causes the text to be selected,
+             * ready for an immediate copy.
+             */
+            $('#sm-output-css').click(function(e){
+                e.preventDefault();
+                selectTextForId('sm-output-css-text');
+                return false;
+            });
 
-			var c_width = cols*maxWidth + ((cols-1)*padding);
-			var c_height = rows*maxHeight + ((rows-1)*padding);
+            function spriteMason(){
+                // update the UI
+                $('.sm-canvas').remove();
+                $('#sm-scratch-pad').show();
+                $('#sm-output-sprite').hide();
+                $('#sm-output-css').show();
 
-			var id = 'sm-canvas-' + Math.floor( Math.random()*99999 );
-			var c = $('<canvas id="'+ id +'" class="sm-canvas" width="'+c_width+'" height="'+c_height+'"></canvas>');
-			$('body').append(c);
-			var canvas = document.getElementById(id);
-			var ctx = canvas.getContext('2d');
-			var sprite_file_name = "sprite" + css_prefix.trim() + icon_class.trim() + ".png";
-			var css = css_prefix + icon_class + " { \n    display: inline-block;\n    vertical-align: middle;\n   background: url(" + sprite_file_name + ") no-repeat;\n}\n\n";
-			$images.each(function(index){
-				var x_offset = Math.floor(index / rows);
-				var y_offset = Math.floor(index % rows);
-				var x = (x_offset * maxHeight)+(x_offset*padding);
-				var y = (y_offset * maxHeight)+(y_offset*padding);
+                // set our options and grab our images
+                var $images = $('.sm-brick');
+                var padding = $('#sm-param-padding').val() ? $('#sm-param-padding').val() : 5;
+                var icon_class = $('#sm-param-class').val() ? $('#sm-param-class').val() : '.icon';
+                var css_prefix = $('#sm-param-prefix').val() ? $('#sm-param-prefix').val() + ' ' : '';
 
-				var brick_name = $(this).attr('title').replace(/\.[^/.]+$/, "");
-				css = css + css_prefix + icon_class + icon_class + "-" +brick_name + " { \n    background-position:" + x  + "px " + y +  "px;\n    height:"+ $(this).height() +"px;\n    width:" + $(this).width() + "px;\n}\n\n";
-				ctx.drawImage(this, x, y, $(this).width(), $(this).height());
-			});
-			$('#sm-scratch-pad').hide();
-			$('#sm-output-sprite-img').attr('src', canvas.toDataURL());
-			$('#sm-output-sprite').show();
-			$('#sm-output-css-text').text(css);
-			$('#sm-output-css').show();
-			//$('#sm-build-button').attr('disabled', true);
-		}
+                // calculate the max height and width of the dropped images.
+                var maxWidth = 0;
+                var maxHeight = 0;
+                var count = 0;
+                $images.each(function(){
+                    count++;
+                    if( $(this).height() > maxHeight ) maxHeight = $(this).height();
+                    if( $(this).width() > maxWidth ) maxWidth = $(this).width();
+                });
 
-		function selectText(containerid) {
-			if (document.selection) {
-				var range = document.body.createTextRange();
-				range.moveToElementText(document.getElementById(containerid));
-				range.select();
-			} else if (window.getSelection) {
-				var range = document.createRange();
-				range.selectNode(document.getElementById(containerid));
-				window.getSelection().addRange(range);
-			}
-		}
+                // calculate our canvas and final sprite size... making it as square as possible
+                var rows = Math.ceil(Math.sqrt(count));
+                var cols = Math.ceil(count/rows);
+                var c_width = cols*maxWidth + ((cols-1)*padding);
+                var c_height = rows*maxHeight + ((rows-1)*padding);
+                var id = 'sm-canvas-' + Math.floor( Math.random()*99999 );
+                var c = $('<canvas id="'+ id +'" class="sm-canvas" width="'+c_width+'" height="'+c_height+'"></canvas>');
+                $('body').append(c);
+
+                // draw the images to the canvas one by one.
+                var canvas = document.getElementById(id);
+                var ctx = canvas.getContext('2d');
+                var sprite_file_name = "sprite" + css_prefix.trim() + icon_class.trim() + ".png";
+                var css = css_prefix + icon_class + " { \n    display: inline-block;\n    vertical-align: middle;\n   background: url(" + sprite_file_name + ") no-repeat;\n}\n\n";
+                $images.each(function(index){
+                    var x_offset = Math.floor(index / rows);
+                    var y_offset = Math.floor(index % rows);
+                    var x = (x_offset * maxHeight)+(x_offset*padding);
+                    var y = (y_offset * maxHeight)+(y_offset*padding);
+
+                    var brick_name = $(this).attr('title').replace(/\.[^/.]+$/, "");
+                    css = css + css_prefix + icon_class + icon_class + "-" +brick_name + " { \n    background-position:" + x  + "px " + y +  "px;\n    height:"+ $(this).height() +"px;\n    width:" + $(this).width() + "px;\n}\n\n";
+                    ctx.drawImage(this, x, y, $(this).width(), $(this).height());
+                });
+
+                // update the UI
+                $('#sm-scratch-pad').hide();
+                $('#sm-output-sprite-img').attr('src', canvas.toDataURL());
+                $('#sm-output-sprite').show();
+                $('#sm-output-css-text').text(css);
+                $('#sm-output-css').show();
+            }
+
+            /**
+             * Selects the text contained within the given element id.
+             *
+             * @param {string} containerId  The id of the container.
+             * @returns {undefined}
+             */
+            function selectTextForId(containerId) {
+                if (document.selection) {
+                    var range = document.body.createTextRange();
+                    range.moveToElementText(document.getElementById(containerId));
+                    range.select();
+                } else if (window.getSelection) {
+                    var range = document.createRange();
+                    range.selectNode(document.getElementById(containerId));
+                    window.getSelection().addRange(range);
+                }
+            } 
+        });
     </script>
 </body>
 </html>
